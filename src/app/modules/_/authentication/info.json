@@ -1,0 +1,7 @@
+{
+    "name": "authentication",
+    "dir": "_\/authentication\/",
+    "class": "Pbcauth",
+    "author": "Micha de Vries",
+    "desc": "A basic system module for PBCMS that authenticates the users"
+}
