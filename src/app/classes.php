@@ -328,9 +328,9 @@
           }
         }
       } else if ($function == 'load') {
-        if (!$file) {
+        if (!$file || $file == 'all' || $file = '*') {
           foreach($mdl as $i) {
-            $this->module('load', $i['name']);
+            return $this->file('require', $mdp . $i['dir'] . '/main.php');
           }
         } else {
           $m = $this->module('info', $file);
