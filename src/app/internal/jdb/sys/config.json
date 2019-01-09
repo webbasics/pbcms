@@ -4,7 +4,10 @@
     "desc" : "A php based cms that only contains the basic functions",
     "ssl" : false,
     "domain" : "localhost",
-    "root" : ""
+    "allowedDomains": [
+      "localhost"
+    ],
+    "root" : "/"
   },
   "jdb" : {
     "path" : "internal/jdb/"
@@ -12,11 +15,25 @@
   "modules" : {
     "path" : "modules/"
   },
+  "headers": {
+    "json": "Content-Type: application/json",
+    "css": "Content-Type: text/css",
+    "js": "Content-Type: text/javascript",
+    "javascript": "Content-Type: text/javascript"
+  },
   "build" : {
-    "name" : "PDCms",
+    "name" : "PBCMS",
     "runtime" : "pbcms",
-    "ver" : "0.0.1",
-    "state" : "alpha",
-    "for" : "dev"
+    "ver" : "0.1.1",
+    "state": {
+      "1": "alpha",
+      "2": "beta",
+      "3": "stable"
+    },
+    "for": {
+      "alpha": "developers",
+      "beta": "testers",
+      "stable": "users"
+    }
   }
 }

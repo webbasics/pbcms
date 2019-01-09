@@ -1,0 +1,22 @@
+var style = document.createElement('style');
+
+style.innerHTML =
+  '@import "https://fonts.googleapis.com/css?family=Montserrat";' +
+	'body::after {' +
+    'font-family: "Montserrat", sans-serif;' +
+    'font-weight: 600;' +
+    'font-size: 17px;' +
+    'content: "ERROR: The database data of this library could not be retrieved! (E_ASSET_CSS_06)";' +
+    'text-align: center;' +
+    'vertical-align: middle;' +
+    'line-height: 55px;' +
+    'position: absolute;' +
+    'top: 0;' +
+    'left: 0;' +
+    'width: 100%;' +
+    'height: 60px;' +
+    'background-color: red;' +
+	'}';
+
+var ref = document.querySelector('script');
+ref.parentNode.insertBefore(style, ref);

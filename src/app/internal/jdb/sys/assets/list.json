@@ -1,0 +1,56 @@
+{
+  "css": {
+    "rable.css": {
+      "global": {
+        "target": "rable.css/global.css"
+      }
+    },
+    "sys": {
+      "err_01": {
+        "target": "_/err/01.css"
+      },
+      "err_02": {
+        "target": "_/err/02.css"
+      },
+      "err_03": {
+        "target": "_/err/03.css"
+      },
+      "err_04": {
+        "target": "_/err/04.css"
+      },
+      "err_05": {
+        "target": "_/err/05.css"
+      },
+      "err_06": {
+        "target": "_/err/06.css"
+      }
+    }
+  },
+  "js": {
+    "rable.js": {
+      "global": {
+        "target": "rable.js/global.js"
+      }
+    },
+    "sys": {
+      "err_01": {
+        "target": "_/err/01.js"
+      },
+      "err_02": {
+        "target": "_/err/02.js"
+      },
+      "err_03": {
+        "target": "_/err/03.js"
+      },
+      "err_04": {
+        "target": "_/err/04.js"
+      },
+      "err_05": {
+        "target": "_/err/05.js"
+      },
+      "err_06": {
+        "target": "_/err/06.css"
+      }
+    }
+  }
+}

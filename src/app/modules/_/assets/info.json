@@ -1,0 +1,8 @@
+{
+    "name": "assets",
+    "dir": "_\/assets\/",
+    "class": "Pbcassets",
+    "author": "Micha de Vries",
+    "desc": "A basic system module for PBCMS that laods the assets",
+    "id": 2
+}

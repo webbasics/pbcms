@@ -1,13 +1,43 @@
 {
-    "default": "home",
-    "home": {
-        "default": "index",
-        "index": {
-            "title": "home",
-            "target": "home.php",
-            "css": "rable.css\/home",
-            "js": "rable.js\/home",
+  "localhost": {
+      "default": "home/index",
+      "home": {
+          "default": "index",
+          "index": {
+              "title": "home",
+              "target": "home",
+              "css": "rable.css\/home",
+              "js": "rable.js\/home",
+              "type": "pb_json_builder",
+              "maintenance": false
+          }
+      }
+  },
+  "global": {
+    "printdata": {
+        "default": "run",
+        "run": {
+            "target": "printdata.php",
+            "type": "pb_script",
+            "maintenance": false
+        }
+    },
+    "assets": {
+        "css": {
+            "target": "assets/css.php",
+            "type": "pb_script",
+            "maintenance": false
+        },
+        "js": {
+            "target": "assets/js.php",
+            "type": "pb_script",
+            "maintenance": false
+        },
+        "img": {
+            "target": "assets/img.php",
+            "type": "pb_script",
             "maintenance": false
         }
     }
+  }
 }

@@ -1,0 +1,70 @@
+[
+  {
+    "ObjectID": 1,
+    "ObjectType": "p",
+    "ObjectContent": "Look! There's a #{https://google.com, S[link] to S[google]}!",
+    "ObjectInfo": [
+      {
+        "ID": 1,
+        "Name": "class",
+        "Content": "testobject"
+      },
+      {
+        "ID": 2,
+        "Name": "id",
+        "Content": "test-object"
+      }
+    ]
+  },
+  {
+    "ObjectID": 2,
+    "DefaultObject": true,
+    "ObjectName": "newline"
+  },
+  {
+    "ObjectID": 3,
+    "DefaultObject": true,
+    "ObjectName": "text",
+    "text": "blablabla"
+  },
+  {
+    "ObjectID": 4,
+    "ObjectType": "div",
+    "ObjectClass": "text-center",
+    "ObjectContent": [
+      {
+        "ObjectID": 1,
+        "ObjectType": "div",
+        "ObjectClass": "row",
+        "ObjectContent": [
+          {
+            "ObjectID": 1,
+            "ObjectType": "div",
+            "ObjectClass": "col-sm-6",
+            "ObjectContent": [
+              {
+                "ObjectID": 1,
+                "DefaultObject": true,
+                "ObjectName": "text",
+                "text": "left centered text without S{link}"
+              }
+            ]
+          },
+          {
+            "ObjectID": 2,
+            "ObjectType": "div",
+            "ObjectClass": "col-sm-6",
+            "ObjectContent": [
+              {
+                "ObjectID": 1,
+                "DefaultObject": true,
+                "ObjectName": "text",
+                "text": "right centered text with #{https://google.com, S[link]}"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

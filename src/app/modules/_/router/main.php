@@ -5,55 +5,90 @@
     public $handler;
     public $app;
     public $pages;
+    public $skltns;
     public $redirect;
     public $config;
+    public $domain;
 
     public function __construct() {
       $this->app = new App;
       $this->config = $this->app->jdb('open', 'sys/router/config');
       $this->pages = $this->app->jdb('open', 'sys/router/pages');
+      $this->skltns = $this->app->jdb('open', 'sys/router/skeletons');
       $this->redirect = (!isset($_POST['app_redirect']) ? false : $_POST['app_redirect']);
-      $this->url = (!isset($_GET['app_url']) ? 'home/index' : $_GET['app_url']);
+      $this->url = (!isset($_GET['app_url']) ? (!$this->exists('defaultUrl') ? 'home/index' : $this->get('defaultUrl')) : $_GET['app_url']);
       $this->url = (substr($this->url, 0, 1) == '/' ? substr($this->url, 1) : $this->url);
       $this->url = (substr($this->url, -1) == '/' ? substr($this->url, 0, -1) : $this->url);
       $this->url = (substr($this->url, 0, 1) == '\\' ? substr($this->url, 1) : $this->url);
       $this->url = (substr($this->url, -1) == '\\' ? substr($this->url, 0, -1) : $this->url);
+
+      if (!in_array($this->app->get('hostname'), $this->app->config['details']['allowedDomains'])) {
+        $this->app->redirect($this->app->baseurl . $this->url, array(
+          "method" => "post",
+          "data" => array (
+            "redirect" => $this->redirect,
+            "badhost" => $this->app->get('hostname'),
+            "oldurl" => $this->url,
+            "noticeCode" => "N_PBRTR_INIT_01"
+          )
+        ));
+      } else {
+        $this->domain = $this->app->get('hostname');
+      }
+
       $this->controller = $this->urlpart(0);
       $this->handler = $this->urlpart(1);
+
     }
 
     protected function urlpart($part = 0) {
       $url = $this->url;
-      $url = (strpos($url, '/') ? explode('/', $url)[$part] : false);
+      $url = (strpos($url, '/') ? explode('/', $url)[$part] : ($part == 0 ? $url : false));
       return $url;
     }
 
     protected function exists($function, $name = false) {
       if ($function == 'controller') {
         $name = (!$name ? $this->controller : $name);
-        if (isset($this->pages[$name])) {
+        if (isset($this->pages[$this->domain][$name])) {
           return true;
         } else {
-          return false;
+          if (isset($this->pages['global'][$name])) {
+            return true;
+          } else {
+            return false;
+          }
         }
       } else if ($function == 'handler') {
         $name = (!$name ? $this->handler : $name);
-        if (isset($this->pages[$this->controller][$name])) {
+        if (isset($this->pages[$this->domain][$this->controller][$name])) {
           return true;
         } else {
-          return false;
+          if (isset($this->pages['global'][$this->controller][$name])) {
+            return true;
+          } else {
+            return false;
+          }
         }
-      } else if ($function == 'defaultController') {
-        if (isset($this->pages['default'])) {
+      } else if ($function == 'defaultUrl') {
+        if (isset($this->pages[$this->domain]['default'])) {
           return true;
         } else {
-          return false;
+          if (isset($this->pages['global']['default'])) {
+            return true;
+          } else {
+            return false;
+          }
         }
       } else if ($function == 'defaultHandler') {
-        if (isset($this->pages[$this->controller]['default'])) {
+        if (isset($this->pages[$this->domain][$this->controller]['default'])) {
           return true;
         } else {
-          return false;
+          if (isset($this->pages['global'][$this->controller]['default'])) {
+            return true;
+          } else {
+            return false;
+          }
         }
       }
     }
@@ -63,27 +98,31 @@
         return $this->controller;
       } else if ($type == 'handler') {
         return $this->handler;
-      } else if ($type == 'defaultController') {
-        if (!$this->exists('defaultController')) {
-          return false;
+      } else if ($type == 'defaultUrl') {
+        if (isset($this->pages[$this->domain]['default'])) {
+          return $this->pages[$this->domain]['default'];
         } else {
-          return $this->pages['default'];
+          if (isset($this->pages['global']['default'])) {
+            return $this->pages['global']['default'];
+          } else {
+            return false;
+          }
         }
       } else if ($type == 'defaultHandler') {
-        if (!$this->exists('defaultHandler')) {
-          return false;
+        if (isset($this->pages[$this->domain][$this->controller]['default'])) {
+          return $this->pages[$this->domain][$this->controller]['default'];
         } else {
-          return $this->pages[$this->controller]['default'];
+          if (isset($this->pages['global'][$this->controller]['default'])) {
+            return $this->pages['global'][$this->controller]['default'];
+          } else {
+            return false;
+          }
         }
       } else if ($type == 'page') {
+        $domain = $this->domain;
         if (!$this->exists('controller')) {
-          if ($this->exists('defaultController')) {
-            $defaultController = $this->get('defaultController');
-            $this->set('controller', $defaultController);
-          } else {
-            http_response_code(404);
-            die;
-          }
+          http_response_code('404');
+          die;
         }
 
         if (!$this->exists('handler')) {
@@ -96,14 +135,27 @@
           }
         }
 
-        $page = $this->pages[$this->controller][$this->handler];
+        if (!isset($this->pages[$domain][$this->controller][$this->handler])) {
+          $domain = 'global';
 
-        if ($page['maintenance']) {
-          $this->set('controller', $this->config['defaults']['maintenance']['controller']);
-          $this->set('function', $this->config['defaults']['maintenance']['handler']);
+          if (!isset($this->pages[$domain][$this->controller][$this->handler])) {
+            $this->set('controller', $this->config['defaults']['404']['controller']);
+            $this->set('handler', $this->config['defaults']['404']['handler']);
+          }
         }
 
-        $page = $this->pages[$this->controller][$this->handler];
+        $page = $this->pages[$domain][$this->controller][$this->handler];
+
+        if ($page['maintenance']) {
+          $domain = 'global';
+
+          $this->set('controller', $this->config['defaults']['maintenance']['controller']);
+          $this->set('handler', $this->config['defaults']['maintenance']['handler']);
+        }
+
+        $page = $this->pages[$domain][$this->controller][$this->handler];
+        $page['domain'] = $domain;
+
         return $page;
       } else if ($type == 'params') {
         $url = $this->url;
@@ -126,6 +178,8 @@
         $this->handler = $input;
       } else if ($type == 'url') {
         $this->url = $input;
+      } else if ($type == 'domain') {
+        $this->domain = $input;
       }
     }
 
@@ -134,7 +188,22 @@
       $page = $this->get('page');
       $param = $this->get('params');
       $redirect = $this->redirect;
-      require_once __DIR__ . '/skeleton.php';
+
+      $skltn = false;
+      if (!isset($page['type'])) {
+        $page['type'] = 'pb_undefined';
+      }
+      foreach ($this->skltns as $item) {
+        if ($page['type'] === $item['Type']) {
+          $skltn = $item;
+        }
+      }
+
+      if (!$skltn) {
+        require_once __DIR__ . '/skeletons/undefined.php';
+      } else {
+        require_once __DIR__ . '/skeletons/' . $skltn['Target'];
+      }
     }
 
     public function setup() {

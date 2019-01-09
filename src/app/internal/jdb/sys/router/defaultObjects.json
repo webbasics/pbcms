@@ -1,0 +1,27 @@
+[
+  {
+    "ObjectID": 1,
+    "ObjectName": "text",
+    "ObjectType": "p",
+    "ObjectContent": "text",
+    "ObjectDefaultContent": ""
+  },
+  {
+    "ObjectID": 2,
+    "ObjectName": "link",
+    "ObjectContent": "text",
+    "ObjectDefaultContent": "link",
+    "ObjectInfo": [
+      {
+        "ID": 1,
+        "Name": "href"
+      }
+    ]
+  },
+  {
+    "ObjectID": 3,
+    "ObjectName": "newline",
+    "ObjectSingleTag": true,
+    "ObjectType": "br"
+  }
+]

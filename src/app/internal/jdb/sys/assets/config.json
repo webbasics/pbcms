@@ -1,0 +1,6 @@
+{
+    "autorun": {
+        "cssReady": "return",
+        "jsReady": "return"
+    }
+}

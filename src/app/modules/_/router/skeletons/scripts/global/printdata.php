@@ -1,0 +1,14 @@
+<h2>POST</h2><br>
+<?php
+  print_r($_POST);
+?>
+<br><br><br><br>
+<h2>GET</h2><br>
+<?php
+  print_r($_GET);
+?>
+<br><br><br><br>
+<h2>HOST</h2><br>
+<?php
+  print_r($app->get('hostname'));
+?>

@@ -1,9 +1,134 @@
 <?php
   class App {
     public $config;
+    public $baseurl;
 
     public function __construct() {
       $this->config = (file_exists(__DIR__ . '/internal/jdb/sys/config.json') ? json_decode(file_get_contents(__DIR__ . '/internal/jdb/sys/config.json'), true) : false);
+      $this->baseurl = ($this->config['details']['ssl'] ? 'https://' : 'http://') . $this->config['details']['domain'] . $this->config['details']['root'];
+    }
+
+    public function get($type, $input = false) {
+      if ($type == 'rand') {
+        $length = (!$input ? 10 : $input);
+        return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
+      } else if ($type == "hostname") {
+        $host = '';
+        $hostSources = array('HTTP_X_FORWARDED_HOST', 'HTTP_HOST', 'SERVER_NAME', 'SERVER_ADDR');
+        $sourceTransformations = array(
+          "HTTP_X_FORWARDED_HOST" => function($val) {
+            $elements = explode(',', $val);
+            return trim(end($elements));
+          }
+        );
+
+        foreach ($hostSources as $src) {
+          if (!empty($host)) break;
+          if (empty($_SERVER[$src])) continue;
+
+          $host = $_SERVER[$src];
+
+          if (array_key_exists($src, $sourceTransformations)) {
+            $host = $sourceTransformations[$src]($host);
+          }
+        }
+
+        $host = preg_replace('/:\d+$/', '', $host);
+
+        return trim($host);
+      } else if ($type == 'hostip') {
+        return file_get_contents("http://ipecho.net/plain");
+      } else if ($type == 'userip' || $type == 'uip') {
+        $ip = '';
+        $ipSources = array('HTTP_CLIENT_HOST', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR');
+        $sourceTransformations = array(
+          "HTTP_X_FORWARDED_FOR" => function($val) {
+            $elements = explode(',', $val);
+            return trim(end($elements));
+          }
+        );
+
+        foreach ($ipSources as $src) {
+          if (!empty($ip)) break;
+          if (empty($_SERVER[$src])) continue;
+
+          $ip = $_SERVER[$src];
+
+          if (array_key_exists($src, $sourceTransformations)) {
+            $ip = $sourceTransformations[$src]($ip);
+          }
+        }
+
+        $ip = trim($ip);
+
+        if ($this->check('privateip', $ip)) {
+          $ip = $this->get('hostip');
+        }
+
+        return $ip;
+      } else if ($type == 'userlocation' || $type == 'userloc' || $type == 'ulocation' || $type == 'uloc') {
+        //$ip = (!$input ? $this->get('uip') : $input);
+        $ip = '192.168.178.255';
+        $this->json('decode', file_get_contents('http://www.geoplugin.net/json.gp?ip=' . $ip));
+      } else {
+        return false;
+      }
+    }
+
+    public function redirect($url, $options = false) {
+      if (!$options) {
+        header("Location: " . $url);
+      } else {
+        if (!isset($options['data']) || !isset($options['method'])) {
+          return false;
+        } else {
+
+          $formid = 'redirect_form_' . $this->get('rand');
+          ?>
+            <form id="<?php echo $formid; ?>" action="<?php echo $url; ?>" method="<?php echo $options['method']; ?>">
+            <?php
+                foreach ($options['data'] as $name => $value) {
+                    echo '<input type="hidden" name="'.htmlentities($name).'" value="'.htmlentities($value).'">';
+                }
+            ?>
+            </form>
+            <script type="text/javascript">
+                document.getElementById('<?php echo $formid; ?>').submit();
+            </script>
+          <?php
+
+          return true;
+        }
+      }
+    }
+
+    public function check($type, $input = false) {
+      if ($type == 'privateip' || $type == 'pip') {
+        $ip = (!$input ? $this->get('uip') : $input);
+        $pri_addrs = array (
+          '10.0.0.0|10.255.255.255',
+          '172.16.0.0|172.31.255.255',
+          '192.168.0.0|192.168.255.255',
+          '169.254.0.0|169.254.255.255',
+          '127.0.0.0|127.255.255.255'
+        );
+
+        $long_ip = ip2long($ip);
+        if ($long_ip != -1) {
+          foreach ($pri_addrs AS $pri_addr) {
+            list ($start, $end) = explode('|', $pri_addr);
+
+            // IF IS PRIVATE
+            if ($long_ip >= ip2long ($start) && $long_ip <= ip2long ($end)) {
+              return true;
+            }
+          }
+        }
+
+        return false;
+      } else {
+        return false;
+      }
     }
 
     public function file($function, $file, $content = false) {
@@ -236,15 +361,11 @@
       }
     }
 
-    public function setheader($input, $custom = false) {
-      if (!$custom) {
-        switch ($input) {
-          case 'json' :
-            header('Content-Type: application/json');
-            break;
-        }
+    public function setheader($header) {
+      if (!isset($this->config['headers'][$header])) {
+        header($header);
       } else {
-        header($input);
+        header($this->config['headers'][$header]);
       }
     }
 
@@ -330,7 +451,10 @@
       } else if ($function == 'load') {
         if (!$file || $file == 'all' || $file = '*') {
           foreach($mdl as $i) {
-            return $this->file('require', $mdp . $i['dir'] . '/main.php');
+            $loaded = $this->file('require', $mdp . $i['dir'] . '/main.php');
+            if (!$loaded) {
+              echo 'module "' . $i['name'] . '" could not be loaded!';
+            }
           }
         } else {
           $m = $this->module('info', $file);

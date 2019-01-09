@@ -5,5 +5,12 @@
         "dir": "_\/router\/",
         "class": "Pbcrouter",
         "enabled": true
+    },
+    {
+        "id": 2,
+        "name": "assets",
+        "dir": "_\/assets\/",
+        "class": "Pbcassets",
+        "enabled": true
     }
 ]
