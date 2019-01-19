@@ -1,6 +1,9 @@
 {
     "autorun": {
         "cssReady": "return",
-        "jsReady": "return"
-    }
+        "jsReady": "return",
+        "imgReady": "return"
+    },
+    "assetProtection": true,
+    "BlockCtrls": true
 }

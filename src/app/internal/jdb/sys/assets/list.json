@@ -52,5 +52,61 @@
         "target": "_/err/06.css"
       }
     }
+  },
+  "img": {
+      "E_N6RZwM74IRU69bhBV9EZAy9n9vGg0hMPeGivNdXx51wkPo21Wv": {
+          "target": "_/err/01",
+          "ext": "png",
+          "author": "Micha de Vries",
+          "licence": "Apache-2.0",
+          "name": "E_ASSET_IMG_01",
+          "original": "E_ASSET_IMG_01.png",
+          "download": false
+      },
+      "E_1oJ8pBxQvQQFEa1N4L80g1opM7CisVeSEhLklOQ11WBuH4SEld": {
+        "target": "_/err/02",
+        "ext": "png",
+        "author": "Micha de Vries",
+        "licence": "Apache-2.0",
+        "name": "E_ASSET_IMG_02",
+        "original": "E_ASSET_IMG_02.png",
+        "download": false
+      },
+      "E_0mdf3NfxAG41wq2PbTjWrn7KVNtgbUCC5mkAk4473jIhc82nuV": {
+          "target": "_/err/03",
+          "ext": "png",
+          "author": "Micha de Vries",
+          "licence": "Apache-2.0",
+          "name": "E_ASSET_IMG_03",
+          "original": "E_ASSET_IMG_03.png",
+          "download": false
+      },
+      "E_ZDt0kBlnETgzvkY4ZB3h6s6vgdxDMRkSNYkrD5DFKmgMEj6Red": {
+          "target": "_/err/04",
+          "ext": "png",
+          "author": "Micha de Vries",
+          "licence": "Apache-2.0",
+          "name": "E_ASSET_IMG_04",
+          "original": "E_ASSET_IMG_04.png",
+          "download": false
+      },
+      "Y0cBDfawKqcAIG0OANJ3qNaH0Sfkq2ARdmTUtOJuCyf0YYE7bW": {
+          "target": "public/Y0cBDfawKqcAIG0OANJ3qNaH0Sfkq2ARdmTUtOJuCyf0YYE7bW",
+          "ext": "jpg",
+          "author": "Axi Vilcinschi",
+          "licence": "Unsplash Licence",
+          "name": "Mountains",
+          "original": "mountains.jpg",
+          "download": true
+      },
+      "vDV5X4KSPbUJVoWsJAEkD2knuR4skOzDrNmFTbtVyosua2CJBr": {
+          "target": "public/vDV5X4KSPbUJVoWsJAEkD2knuR4skOzDrNmFTbtVyosua2CJBr",
+          "ext": "png",
+          "author": "Micha de Vries",
+          "licence": false,
+          "name": "Image icon",
+          "original": "image_icon.png",
+          "download": false
+      }
   }
 }

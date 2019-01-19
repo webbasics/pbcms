@@ -19,12 +19,17 @@
     "json": "Content-Type: application/json",
     "css": "Content-Type: text/css",
     "js": "Content-Type: text/javascript",
-    "javascript": "Content-Type: text/javascript"
+    "javascript": "Content-Type: text/javascript",
+    "jpg": "Content-Type: image/jpeg",
+    "jpeg": "Content-Type: image/jpeg",
+    "ico": "Content-Type: image/ico",
+    "png": "Content-Type: image/png",
+    "gif": "Content-Type: image/gif"
   },
   "build" : {
     "name" : "PBCMS",
     "runtime" : "pbcms",
-    "ver" : "0.1.1",
+    "ver" : "0.1.2",
     "state": {
       "1": "alpha",
       "2": "beta",

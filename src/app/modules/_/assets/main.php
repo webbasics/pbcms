@@ -170,10 +170,9 @@
             if (!isset($assetinfo['target'])) {
               $this->set('lib', 'sys');
               $this->set('libname', 'err_06');
-            } else {
-              $css = $this->app->file('content', 'modules/_/assets/files/css/' . $assetinfo['target']);
-              return $css;
             }
+            $css = $this->app->file('content', 'modules/_/assets/files/css/' . $assetinfo['target']);
+            return $css;
           } else {
             return false;
           }
@@ -341,10 +340,10 @@
             if (!isset($assetinfo['target'])) {
               $this->set('lib', 'sys');
               $this->set('libname', 'err_06');
-            } else {
-              $js = $this->app->file('content', 'modules/_/assets/files/js/' . $assetinfo['target']);
-              return $js;
             }
+
+            $js = $this->app->file('content', 'modules/_/assets/files/js/' . $assetinfo['target']);
+            return $js;
           } else {
             return false;
           }
@@ -352,6 +351,147 @@
       };
     }
 
+    public function img($masterInput = false) {
+      return new class($masterInput) extends Pbcassets {
+        public $app;
+        public $config;
+        public $assets;
+        public $imglist;
+        public $imgurl;
+        public $imginfo;
+
+        public function __construct($options) {
+          $this->app = new App;
+          $this->config = $this->app->jdb('open', 'sys/assets/config');
+          $this->assets = $this->app->jdb('open', 'sys/assets/list');
+          $this->imglist = $this->assets['img'];
+          $this->set('imgurl', false);
+
+          if (!is_array($options)) {
+            $this->autorun($options);
+          }
+        }
+
+        public function autorun($options) {
+
+          $imgReady = false;
+          if (!is_array($options)) {
+            return false;
+          } else {
+            if (isset($options['imgurl'])) {
+              $params = $options['imgurl'];
+            } else {
+              if (!isset($options['params'])) {
+                return false;
+              } else {
+                $params = $options['params'];
+              }
+            }
+          }
+
+          if (isset($options['options'])) {
+            $ops = $options[$options];
+          } else {
+            $ops = $options;
+          }
+
+          if (isset($ops['imgReady'])) {
+            $imgReady = $ops['imgReady'];
+          }
+
+          $this->init($params);
+
+          $img = $this->get('img');
+
+          if (!$img) {
+            //error: 01
+            $this->set('imgurl', 'E_N6RZwM74IRU69bhBV9EZAy9n9vGg0hMPeGivNdXx51wkPo21Wv');
+            $img = $this->get('img');
+          }
+
+          if ($imgReady == 'print' || $imgReady == 'return') {
+            if ($imgReady == 'print') {
+              $this->print($img);
+              return true;
+            } else {
+              return $img;
+            }
+          } else {
+            if ($this->config['autorun']['imgReady'] == 'print') {
+              $this->print($img);
+              return true;
+            } else {
+              return $img;
+            }
+          }
+        }
+
+        public function init($params) {
+          if (!$params) {
+            //error: 02
+            $this->set('imgurl', 'E_1oJ8pBxQvQQFEa1N4L80g1opM7CisVeSEhLklOQ11WBuH4SEld');
+            return false;
+          } else {
+            $this->set('imgurl', $params[1]);
+
+            return true;
+          }
+        }
+
+        public function print($img) {
+          $this->app->setheader($this->get('imgExt'));
+          print_r($img);
+        }
+
+        public function exists($type, $input = false) {
+          if ($type == 'imgurl') {
+            if (!$input) { $input = $this->imgurl; }
+            if (isset($this->imglist[$input])) {
+              return true;
+            } else {
+              return false;
+            }
+          }
+        }
+
+        public function set($type, $input = false) {
+          if ($type == 'imgurl') {
+            $this->imgurl = (substr($this->imgurl, 0, 2) == 'E_' ? $this->get('imgurl') : $input);
+          } else if ($type == 'imgExt') {
+            $this->imgExt = $input;
+          } else if ($type == 'imginfo') {
+            $this->imginfo = $input;
+          }
+        }
+
+        public function get($type) {
+          if ($type == 'imgurl') {
+            return $this->imgurl;
+          } else if ($type == 'imgExt') {
+            return $this->get('imginfo')['ext'];
+          } else if ($type == 'imginfo') {
+            if (!$this->exists('imgurl')) {
+              //error: 03
+              $this->set('imgurl', 'E_0mdf3NfxAG41wq2PbTjWrn7KVNtgbUCC5mkAk4473jIhc82nuV');
+            }
+
+            return $this->imglist[$this->get('imgurl')];
+          } else if ($type == 'img') {
+            if (!$this->get('imginfo')) {
+              //error: 04
+              $this->set('imgurl', 'E_ZDt0kBlnETgzvkY4ZB3h6s6vgdxDMRkSNYkrD5DFKmgMEj6Red');
+            }
+            $imginfo = $this->get('imginfo');
+
+            $img = $this->app->file('content', 'modules/_/assets/files/img/' . $imginfo['target'] . '.' . $imginfo['ext']);
+            return $img;
+          } else {
+            return false;
+          }
+        }
+
+      };
+    }
 
   }
 ?>

@@ -126,6 +126,8 @@
         }
 
         return false;
+      } else if ($type == "mobile") {
+        return preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i", $_SERVER["HTTP_USER_AGENT"]);
       } else {
         return false;
       }
@@ -285,6 +287,27 @@
               return false;
             }
           }
+        }
+      } else if ($function == 'dl' || $function == 'download') {
+        if (!$content) {
+          $filename = basename($file);
+        } else {
+          $filename = $content;
+        }
+
+        if (!$this->file('exists', $file)) {
+          return false;
+        } else {
+          header('Content-Description: File Transfer');
+          header('Content-Type: ' . mime_content_type(__DIR__ . '/' . $file));
+          header('Content-Disposition: attachment; filename="' . $filename . '"');
+          header('Expires: 0');
+          header('Cache-Control: must-revalidate');
+          header('Pragma: public');
+          header('Content-Length: ' . filesize( __DIR__ . '/' . $file));
+          flush();
+          readfile(__DIR__ . '/' . $file);
+          return true;
         }
       } else {
         return false;
